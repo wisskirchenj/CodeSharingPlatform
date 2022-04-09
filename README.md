@@ -1,6 +1,7 @@
 # IDEA EDU Course ...
 
-Implemented in the Java <b>Backend Developer</b> Track of hyperskill.org's JetBrain Academy.
+Implemented in the Java <b>Backend Developer</b> Track of hyperskill.org's JetBrain Academy.<br>
+https://hyperskill.org/projects/130
 
 Project goal is to implement a "Spring boot reactive REST-Services" based platform for code sharing between developers
 over the internet. The Code Sharing Platform will as well provide a web interface delivering text/html as
