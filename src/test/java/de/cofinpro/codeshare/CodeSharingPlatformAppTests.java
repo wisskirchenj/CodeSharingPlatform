@@ -25,16 +25,10 @@ class CodeSharingPlatformAppTests {
 	@Autowired
 	MockMvc mockMvc;
 
-	HttpHeaders htmlHeader;
-	HttpHeaders jsonHeader;
 	ObjectMapper objectMapper = new ObjectMapper();
 
 	@BeforeEach
 	void setup() {
-		htmlHeader = new HttpHeaders();
-		htmlHeader.setContentType(MediaType.TEXT_HTML);
-		jsonHeader = new HttpHeaders();
-		jsonHeader.setContentType(MediaType.APPLICATION_JSON);
 	}
 
 	@Test
