@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Create</title>
+    <link rel="stylesheet" th:href="@{/css/create.css}"/>
+    <script type="text/javascript" th:src="@{/js/send.js}"></script>
+</head>
+<body>
+    <form>
+        <textarea class="ui-width" id="code_snippet">// write your code here</textarea>
+        <br>
+        <div class="ui-width" id="div_button">
+            <button id="send_snippet" type="button" onclick="send()">Submit</button>
+        </div>
+    </form>
+</body>
+</html>

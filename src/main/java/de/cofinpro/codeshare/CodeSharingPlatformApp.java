@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CodeSharingPlatformApp {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(CodeSharingPlatformApp.class, args);
 	}
-
 }

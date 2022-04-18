@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class BeansConfiguration {
 
     @Bean
-    public CodeSnippet getCode() {
+    public CodeSnippet getInitialCode() {
         return new CodeSnippet("""
                 @Configuration
                 public class CodeSharingConfiguration {

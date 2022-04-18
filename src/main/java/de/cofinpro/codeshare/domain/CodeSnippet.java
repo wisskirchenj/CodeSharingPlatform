@@ -1,16 +1,17 @@
 package de.cofinpro.codeshare.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Value;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Value
-@AllArgsConstructor
 public class CodeSnippet {
 
     String code;
+    String date;
 
-    public String toHtml() {
-        return "<html>\n<head>\n    <title>Code</title>\n</head>\n<body>\n    <pre>\n" + code
-                + "</pre>\n</body>\n</html>";
+    public CodeSnippet(String code) {
+        this.code = code;
+        this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
     }
 }
