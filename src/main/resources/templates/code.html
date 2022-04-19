@@ -6,8 +6,8 @@
     <link rel="stylesheet" th:href="@{/css/code.css}"/>
 </head>
 <body>
-<span id="load_date" th:text="${date}"></span>
+<span id="load_date" th:text="${codeSnippet.date}"></span>
 <br>
-<pre id="code_snippet"><span th:text="${code}"></span></pre>
+<pre id="code_snippet"><span th:text="${codeSnippet.code}"></span></pre>
 </body>
 </html>

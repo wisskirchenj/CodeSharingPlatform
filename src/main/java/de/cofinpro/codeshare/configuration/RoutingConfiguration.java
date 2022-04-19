@@ -16,10 +16,28 @@ public class RoutingConfiguration {
     @Bean
     public RouterFunction<ServerResponse> routesToCodeEndpoints(@Autowired ApiHandler apiHandler) {
         return route()
-                .GET("/api/code", apiHandler::getCodeAsJson)
-                .GET("/code", apiHandler::getCodeAsHtml)
+                .add(htmlRoutes(apiHandler))
+                .add(apiRoutes(apiHandler))
+                .build();
+    }
+
+    private RouterFunction<ServerResponse> apiRoutes(ApiHandler apiHandler) {
+        return route()
+                .GET("/api/code/{id}",
+                        request -> request.pathVariable("id").matches("\\d+"),
+                        apiHandler::getCodeAsJson)
+                .POST("/api/code/new", apiHandler::saveNewCode)
+                .GET("/api/code/latest", apiHandler::getLatestCodeAsJson)
+                .build();
+    }
+
+    private RouterFunction<ServerResponse> htmlRoutes(ApiHandler apiHandler) {
+        return route()
+                .GET("/code/{id}",
+                        request -> request.pathVariable("id").matches("\\d+"),
+                        apiHandler::getCodeAsHtml)
                 .GET("/code/new", apiHandler::getNewCode)
-                .POST("api/code/new", apiHandler::saveNewCode)
+                .GET("/code/latest", apiHandler::getLatestCodeAsHtml)
                 .build();
     }
 }

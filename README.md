@@ -18,7 +18,7 @@ As build tool gradle is used this time to get to know this tool better.
 
 ## Repository Contents
 
-Sources for all project tasks (5 stages) with tests, static contents and configurations.
+Sources for all project tasks (5 stages) with tests, static contents HTML, JS, CSS and configurations.
 
 ## Progress
 
@@ -27,3 +27,5 @@ Sources for all project tasks (5 stages) with tests, static contents and configu
 11.04.22 Stage 1 completed with functional MVC endpoints, html and json type GET of a fixed code snippet.
 
 18.04.22 Stage 2 completed with frontend using thymeleaf templates with RenderingResponse, JS, CSS and HTML forms.
+
+19.04.22 Stage 3 completed, routing extended, thymeleaf with collections, more endpoints
