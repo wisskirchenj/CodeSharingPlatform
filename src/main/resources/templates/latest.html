@@ -4,12 +4,16 @@
     <meta charset="utf-8">
     <title>Latest</title>
     <link rel="stylesheet" th:href="@{/css/code.css}"/>
+    <link rel="stylesheet"
+          href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/default.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body>
-<div th:each="code : ${codeSnippetList}">
+<div th:each="code : ${codeSnippetDTOList}">
     <span id="load_date" th:text="${code.date}"></span>
     <br>
-    <pre id="code_snippet"><span th:text="${code.code}"></span></pre>
+    <pre id="code_snippet"><code><span th:text="${code.code}"></span></code></pre>
 </div>
 </body>
 </html>

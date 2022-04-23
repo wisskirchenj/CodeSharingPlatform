@@ -1,7 +1,7 @@
 package de.cofinpro.codeshare.handler;
 
-import de.cofinpro.codeshare.domain.CodeSnippet;
-import de.cofinpro.codeshare.persistence.CodeSnippetRepository;
+import de.cofinpro.codeshare.domain.CodeSnippetDTO;
+import de.cofinpro.codeshare.domain.CodeSnippetStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -19,13 +19,13 @@ import static org.springframework.web.servlet.function.ServerResponse.ok;
 @Service
 public class ApiHandler {
 
-    private final ParameterizedTypeReference<CodeSnippet> codeSnippetType = new ParameterizedTypeReference<>(){};
-    private final ParameterizedTypeReference<Map.Entry<String ,String>> mapEntryType = new ParameterizedTypeReference<>(){};
-    private final CodeSnippetRepository codeSnippetRepository;
+    private final ParameterizedTypeReference<CodeSnippetDTO> codeSnippetType = new ParameterizedTypeReference<>(){};
+    private final ParameterizedTypeReference<Map.Entry<String, String>> mapEntryType = new ParameterizedTypeReference<>(){};
+    private final CodeSnippetStorage codeSnippetStorage;
 
     @Autowired
-    public ApiHandler(CodeSnippetRepository codeSnippetRepository) {
-        this.codeSnippetRepository = codeSnippetRepository;
+    public ApiHandler(CodeSnippetStorage codeSnippetStorage) {
+        this.codeSnippetStorage = codeSnippetStorage;
     }
 
     public ServerResponse getCodeAsHtml(ServerRequest request) {
@@ -37,7 +37,7 @@ public class ApiHandler {
     }
 
     public ServerResponse getLatestCodeAsHtml(ServerRequest ignoredRequest) {
-        return ok().render("latest", codeSnippetRepository.findLatest());
+        return ok().render("latest", codeSnippetStorage.findLatest());
     }
 
     public ServerResponse getCodeAsJson(ServerRequest request) {
@@ -46,17 +46,18 @@ public class ApiHandler {
 
     public ServerResponse saveNewCode(ServerRequest serverRequest) throws ServletException, IOException {
         Map.Entry<String, String> received = serverRequest.body(mapEntryType);
-        long id = codeSnippetRepository.addCode(received.getValue());
-        return ok().contentType(APPLICATION_JSON).body(String.format("{\"id\": %d}", id));
+        long id = codeSnippetStorage.addCode(received.getValue());
+        return ok().contentType(APPLICATION_JSON).body(String.format("{\"id\": \"%d\"}", id));
     }
 
     public ServerResponse getLatestCodeAsJson(ServerRequest ignoredRequest) {
-        return ok().contentType(APPLICATION_JSON).body(codeSnippetRepository.findLatest());
+        return ok().contentType(APPLICATION_JSON).body(codeSnippetStorage.findLatest());
     }
 
-    private CodeSnippet findCodeByIdOrThrow(ServerRequest request) {
-        return codeSnippetRepository
+    private CodeSnippetDTO findCodeByIdOrThrow(ServerRequest request) {
+        return codeSnippetStorage
                 .findById(Long.parseLong(request.pathVariable("id")))
-                .orElseThrow(CodeNotFoundException::new);
+                .orElseThrow(CodeNotFoundException::new)
+                .toDTO();
     }
 }

@@ -10,9 +10,19 @@ import org.springframework.web.servlet.function.ServerResponse;
 
 import static org.springframework.web.servlet.function.RouterFunctions.route;
 
+
+/**
+ * Configuration class setting up all routes to the code endpoints
+ */
 @Configuration
 public class RoutingConfiguration {
 
+    /**
+     * Bean - method that routes all our (presently 6) served endpoints to their dedicated handler functions
+     * - replaces the RequestMapping of the Rest-Controller.
+     * @param apiHandler the handler-methods containing class
+     * @return the RouterFunction used by SpringMvc 's DispatcherServlet.
+     */
     @Bean
     public RouterFunction<ServerResponse> routesToCodeEndpoints(@Autowired ApiHandler apiHandler) {
         return route()

@@ -1,21 +1,23 @@
 package de.cofinpro.codeshare.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Value;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Immutable DTO object representing a code snippet with the code text and a timestamp of creation.
+ */
 @Value
-public class CodeSnippet {
+@AllArgsConstructor
+public class CodeSnippetDTO {
 
     String code;
     String date;
-    @JsonIgnore
-    Long id;
 
-    public CodeSnippet(String code, long id) {
+    public CodeSnippetDTO(String code) {
         this.code = code;
-        this.id = id;
         this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
     }
 }
