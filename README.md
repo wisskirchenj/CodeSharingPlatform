@@ -33,5 +33,5 @@ Sources for all project tasks (5 stages) with tests, static contents HTML, JS, C
 
 22.04.22 Stage 4 completed, highlight.js added for html rendering and H2 database store implemented, with a Spring PagingAndSortingRepository
 
-22.04.22 Final Stage 5 completed, store snippets by uuid. Secret snippets added with restriction on views
+30.04.22 Final Stage 5 completed, store snippets by uuid. Secret snippets added with restriction on views
 and/or time in seconds. Conditional thymeleaf rendering.
