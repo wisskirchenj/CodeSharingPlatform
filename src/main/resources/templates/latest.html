@@ -10,7 +10,7 @@
     <script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body>
-<div th:each="code : ${codeSnippetDTOList}">
+<div th:each="code : ${codeSnippetResponseDTOList}">
     <span id="load_date" th:text="${code.date}"></span>
     <br>
     <pre id="code_snippet"><code><span th:text="${code.code}"></span></code></pre>

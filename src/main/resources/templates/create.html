@@ -10,6 +10,16 @@
     <form>
         <textarea class="ui-width" id="code_snippet">// write your code here</textarea>
         <br>
+        <div class="ui-width">
+            <div>
+                <label for="time_restriction">Time restriction:</label>
+                <input id="time_restriction" type="text" inputmode="numeric" placeholder="0" />
+            </div>
+            <div>
+                <label for="views_restriction">Views restriction:</label>
+                <input id="views_restriction" type="text" inputmode="numeric" placeholder="0" />
+            </div>
+        </div>
         <div class="ui-width" id="div_button">
             <button id="send_snippet" type="button" onclick="send()">Submit</button>
         </div>

@@ -1,6 +1,7 @@
 package de.cofinpro.codeshare.handler;
 
-import de.cofinpro.codeshare.domain.CodeSnippetDTO;
+import de.cofinpro.codeshare.domain.CodeSnippetRequestDTO;
+import de.cofinpro.codeshare.domain.CodeSnippetResponseDTO;
 import de.cofinpro.codeshare.domain.CodeSnippetStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -11,16 +12,18 @@ import org.springframework.web.servlet.function.ServerResponse;
 import javax.servlet.ServletException;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.servlet.function.ServerResponse.ok;
 
+/**
+ * service layer handler class (in terms of WebMvc.fn) that handles all routed endpoint request of the application.
+ */
 @Service
 public class ApiHandler {
 
-    private final ParameterizedTypeReference<CodeSnippetDTO> codeSnippetType = new ParameterizedTypeReference<>(){};
-    private final ParameterizedTypeReference<Map.Entry<String, String>> mapEntryType = new ParameterizedTypeReference<>(){};
+    private final ParameterizedTypeReference<CodeSnippetResponseDTO> codeResponseType = new ParameterizedTypeReference<>(){};
+    private final ParameterizedTypeReference<CodeSnippetRequestDTO> codeRequestType = new ParameterizedTypeReference<>(){};
     private final CodeSnippetStorage codeSnippetStorage;
 
     @Autowired
@@ -41,23 +44,28 @@ public class ApiHandler {
     }
 
     public ServerResponse getCodeAsJson(ServerRequest request) {
-        return ok().contentType(APPLICATION_JSON).body(findCodeByIdOrThrow(request), codeSnippetType);
+        return ok().contentType(APPLICATION_JSON).body(findCodeByIdOrThrow(request), codeResponseType);
     }
 
     public ServerResponse saveNewCode(ServerRequest serverRequest) throws ServletException, IOException {
-        Map.Entry<String, String> received = serverRequest.body(mapEntryType);
-        long id = codeSnippetStorage.addCode(received.getValue());
-        return ok().contentType(APPLICATION_JSON).body(String.format("{\"id\": \"%d\"}", id));
+        CodeSnippetRequestDTO received = serverRequest.body(codeRequestType);
+        String uuid = codeSnippetStorage.addCode(received);
+        return ok().contentType(APPLICATION_JSON).body(String.format("{\"id\": \"%s\"}", uuid));
     }
 
     public ServerResponse getLatestCodeAsJson(ServerRequest ignoredRequest) {
         return ok().contentType(APPLICATION_JSON).body(codeSnippetStorage.findLatest());
     }
 
-    private CodeSnippetDTO findCodeByIdOrThrow(ServerRequest request) {
-        return codeSnippetStorage
-                .findById(Long.parseLong(request.pathVariable("id")))
-                .orElseThrow(CodeNotFoundException::new)
-                .toDTO();
+    /**
+     * look up a code snippet by the uuid given as "id" path variable and return a response DTO
+     * if the uuid is found and valid to display (regarding restrictions) - else throw exception.
+     * @param request the http Get request
+     * @return the CodeSnippetResponseDTO after retrieval and restriction application
+     * @throws CodeNotFoundException in case no code is found / stored with given uuid
+     */
+    private CodeSnippetResponseDTO findCodeByIdOrThrow(ServerRequest request) {
+        return codeSnippetStorage.findById(request.pathVariable("id"))
+                .orElseThrow(CodeNotFoundException::new);
     }
 }

@@ -10,7 +10,15 @@
     <script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body>
-<span id="load_date" th:text="${codeSnippetDTO.date}"></span>
-<pre id="code_snippet"><code><span th:text="${codeSnippetDTO.code}"></span></code></pre>
+<span id="load_date" th:text="${codeSnippetResponseDTO.date}"></span>
+<span id="views_restriction" th:unless="${codeSnippetResponseDTO.views == 0}" class="restrict">
+    <br>
+    <span th:text="${codeSnippetResponseDTO.views} == -1 ? 0 : ${codeSnippetResponseDTO.views}"></span> more views allowed
+</span>
+<span id="time_restriction" th:if="${codeSnippetResponseDTO.time > 0}" class="restrict">
+    <br>
+    The code will be available for <span th:text="${codeSnippetResponseDTO.time}"></span> seconds
+</span>
+<pre id="code_snippet"><code><span th:text="${codeSnippetResponseDTO.code}"></span></code></pre>
 </body>
 </html>

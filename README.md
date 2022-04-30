@@ -15,7 +15,7 @@ applications - experimenting with the new functional Spring 5 routing and handli
 
 As build tool gradle is used this time to get to know this tool better.
 
-[//]: # (Project was completed on xx.0d.22.)
+# Project was completed on 30.04.22.
 
 ## Repository Contents
 
@@ -32,3 +32,6 @@ Sources for all project tasks (5 stages) with tests, static contents HTML, JS, C
 19.04.22 Stage 3 completed, routing extended, thymeleaf with collections, more endpoints
 
 22.04.22 Stage 4 completed, highlight.js added for html rendering and H2 database store implemented, with a Spring PagingAndSortingRepository
+
+22.04.22 Final Stage 5 completed, store snippets by uuid. Secret snippets added with restriction on views
+and/or time in seconds. Conditional thymeleaf rendering.

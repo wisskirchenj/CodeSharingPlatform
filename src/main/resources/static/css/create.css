@@ -1,6 +1,19 @@
 .ui-width {
     width: 80vw;
 }
+div {
+    margin-bottom: 10px;
+}
+label {
+    font: 1rem 'Fira Sans', sans-serif;
+    display: inline-block;
+    width: 40vw;
+    text-align: right;
+    padding-right: 1em;
+}
+input {
+    text-align: right;
+}
 #code_snippet {
     font-size: larger;
     height: 150px;

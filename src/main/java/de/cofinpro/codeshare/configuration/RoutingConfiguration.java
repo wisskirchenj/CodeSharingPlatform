@@ -33,21 +33,17 @@ public class RoutingConfiguration {
 
     private RouterFunction<ServerResponse> apiRoutes(ApiHandler apiHandler) {
         return route()
-                .GET("/api/code/{id}",
-                        request -> request.pathVariable("id").matches("\\d+"),
-                        apiHandler::getCodeAsJson)
-                .POST("/api/code/new", apiHandler::saveNewCode)
                 .GET("/api/code/latest", apiHandler::getLatestCodeAsJson)
+                .GET("/api/code/{id}", apiHandler::getCodeAsJson)
+                .POST("/api/code/new", apiHandler::saveNewCode)
                 .build();
     }
 
     private RouterFunction<ServerResponse> htmlRoutes(ApiHandler apiHandler) {
         return route()
-                .GET("/code/{id}",
-                        request -> request.pathVariable("id").matches("\\d+"),
-                        apiHandler::getCodeAsHtml)
                 .GET("/code/new", apiHandler::getNewCode)
                 .GET("/code/latest", apiHandler::getLatestCodeAsHtml)
+                .GET("/code/{id}", apiHandler::getCodeAsHtml)
                 .build();
     }
 }

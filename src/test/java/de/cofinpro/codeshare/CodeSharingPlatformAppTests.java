@@ -2,7 +2,8 @@ package de.cofinpro.codeshare;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.cofinpro.codeshare.persistence.CodeSnippet;
+import de.cofinpro.codeshare.domain.CodeSnippetRequestDTO;
+import de.cofinpro.codeshare.domain.CodeSnippetResponseDTO;
 import de.cofinpro.codeshare.domain.CodeSnippetStorage;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,8 +49,8 @@ class CodeSharingPlatformAppTests {
 	MockMvc mockMvc;
 
 	ObjectMapper objectMapper = new ObjectMapper();
-
-	private CodeSnippet codeSnippet;
+	CodeSnippetResponseDTO codeSnippet;
+	CodeSnippetRequestDTO requestDTO;
 
 	@Value("${codesharing.latest.amount:10}")
 	private int amountLatest;
@@ -63,12 +64,18 @@ class CodeSharingPlatformAppTests {
 		}
 	}
 
+	@BeforeEach
+	void setup() {
+		requestDTO = new CodeSnippetRequestDTO("void method(<? extends T>) {\n  //blah\n}", 0L, 0);
+	}
+
 	@Test
 	void whenGetCode_HtmlReturnedWith200ContainsCodeSnippet() throws Exception {
-		long id = snippetStorage.addCode("void method(<? extends T>) {\n  //blah\n}");
-		assertTrue(snippetStorage.findById(id).isPresent());
-		codeSnippet = snippetStorage.findById(id).get();
-		mockMvc.perform(get("/code/%d".formatted(id)))
+		String uuid = snippetStorage.addCode(requestDTO);
+		assertTrue(snippetStorage.findById(uuid).isPresent());
+		codeSnippet = snippetStorage.findById(uuid).get();
+		mockMvc.perform(get("/code/%s".formatted(uuid)))
+				.andExpect(header().string("content-type", "text/html;charset=UTF-8"))
 				.andExpect(content().string(containsStringIgnoringCase("<title>Code</title>")))
 				.andExpect(content().string(containsString(StringEscapeUtils.escapeHtml4(codeSnippet.getCode()))))
 				.andExpect(content().string(containsString(codeSnippet.getDate())))
@@ -91,43 +98,28 @@ class CodeSharingPlatformAppTests {
 						.header("content-type", "application/json")
 						.content("{\"code\":\"another test code\"}"))
 				.andExpect(header().string("content-type", MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(content().string(matchesRegex("\\{\\s*\"id\":\\s*\"\\d+\"\\s*}")))
+				.andExpect(content().string(matchesRegex("\\{\\s*\"id\":\\s*\".+\"\\s*}")))
 				.andExpect(status().isOk()).andReturn().getResponse();
-		Optional<CodeSnippet> retrieved = snippetStorage.findById(idFromResponse(response));
+		Optional<CodeSnippetResponseDTO> retrieved = snippetStorage.findById(idFromResponse(response));
 		assertTrue(retrieved.isPresent());
 		assertEquals("another test code", retrieved.get().getCode());
 	}
 
 	@Test
 	void whenApiCode_JsonCodeReturnedWith200() throws Exception {
-		long id = snippetStorage.addCode("void method(<? extends T>) {\n  //blah\n}");
-		assertTrue(snippetStorage.findById(id).isPresent());
-		codeSnippet = snippetStorage.findById(id).get();
-		mockMvc.perform(get("/api/code/%d".formatted(id)))
-				.andExpect(content().json(toJson(codeSnippet.toDTO())))
-				.andExpect(status().isOk());
-	}
-
-	@Test
-	void whenApiCode_HeaderIsJson() throws Exception {
-		snippetStorage.addCode("void method(<? extends T>) {\n  //blah\n}");
-		mockMvc.perform(get("/api/code/1"))
+		String uuid = snippetStorage.addCode(requestDTO);
+		assertTrue(snippetStorage.findById(uuid).isPresent());
+		codeSnippet = snippetStorage.findById(uuid).get();
+		mockMvc.perform(get("/api/code/%s".formatted(uuid)))
+				.andExpect(content().json(toJson(codeSnippet)))
 				.andExpect(header().string("content-type", MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(status().isOk());
 	}
 
 	@Test
-	void whenCode_HeaderIsHtml() throws Exception {
-		snippetStorage.addCode("void method(<? extends T>) {\n  //blah\n}");
-		mockMvc.perform(get("/code/1"))
-				.andExpect(header().string("content-type", "text/html;charset=UTF-8"))
-				.andExpect(status().isOk());
-	}
-
-	@Test
-	void whenLatest_RightAmountReturned() throws Exception {
+	void whenApiLatest_RightAmountReturned() throws Exception {
 		for (int i = 0; i < amountLatest + 3; i++) {
-			snippetStorage.addCode("void method(<? extends T>) {\n  //blah\n}");
+			snippetStorage.addCode(requestDTO);
 		}
 		MockHttpServletResponse response =  mockMvc.perform(get("/api/code/latest"))
 				.andExpect(header().string("content-type", MediaType.APPLICATION_JSON_VALUE))
@@ -140,15 +132,30 @@ class CodeSharingPlatformAppTests {
 		assertFalse(matcher.find());
 	}
 
+	@Test
+	void whenLatest_RightAmountReturned() throws Exception {
+		for (int i = 0; i < amountLatest + 3; i++) {
+			snippetStorage.addCode(requestDTO);
+		}
+		MockHttpServletResponse response =  mockMvc.perform(get("/code/latest"))
+				.andExpect(header().string("content-type", "text/html;charset=UTF-8"))
+				.andExpect(status().isOk()).andReturn().getResponse();
+		String content = response.getContentAsString();
+		Matcher matcher = Pattern.compile("code_snippet").matcher(content);
+		for (int i = 0; i < amountLatest; i++) {
+			assertTrue(matcher.find());
+		}
+		assertFalse(matcher.find());
+	}
+
 	private String toJson(Object obj) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(obj);
 	}
 
-	private long idFromResponse(MockHttpServletResponse response) throws Exception {
-		System.out.println(response.getContentAsString());
-		Matcher regexMatcher = Pattern.compile("id\\s*\"\\s*:\\s*\"(\\d+)\\s*")
+	private String idFromResponse(MockHttpServletResponse response) throws Exception {
+		Matcher regexMatcher = Pattern.compile("id\\s*\"\\s*:\\s*\"(.+)\"")
 				.matcher(response.getContentAsString());
 		assertTrue(regexMatcher.find());
-		return Integer.parseInt(regexMatcher.group(1));
+		return regexMatcher.group(1);
 	}
 }

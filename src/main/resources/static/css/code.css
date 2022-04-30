@@ -1,3 +1,6 @@
+.restrict {
+    font: 1rem 'Fira Sans Bold', sans-serif;
+}
 #load_date {
     color: green;
     font-style: normal;
