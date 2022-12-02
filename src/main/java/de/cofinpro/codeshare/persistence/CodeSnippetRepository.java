@@ -2,7 +2,7 @@ package de.cofinpro.codeshare.persistence;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -11,7 +11,7 @@ import java.util.Optional;
  * Paging and sorting extending repository for DB-storage of CodeSnippets
  */
 @Repository
-public interface CodeSnippetRepository extends PagingAndSortingRepository<CodeSnippet, Long> {
+public interface CodeSnippetRepository extends JpaRepository<CodeSnippet, Long> {
 
     Optional<CodeSnippet> findByUuid(String uuid);
 

@@ -3,13 +3,12 @@ package de.cofinpro.codeshare.handler;
 import de.cofinpro.codeshare.domain.CodeSnippetRequestDTO;
 import de.cofinpro.codeshare.domain.CodeSnippetResponseDTO;
 import de.cofinpro.codeshare.domain.CodeSnippetStorage;
+import jakarta.servlet.ServletException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
-
-import javax.servlet.ServletException;
 
 import java.io.IOException;
 
@@ -47,7 +46,7 @@ public class ApiHandler {
         return ok().contentType(APPLICATION_JSON).body(findCodeByIdOrThrow(request), codeResponseType);
     }
 
-    public ServerResponse saveNewCode(ServerRequest serverRequest) throws ServletException, IOException {
+    public ServerResponse saveNewCode(ServerRequest serverRequest) throws IOException, ServletException {
         CodeSnippetRequestDTO received = serverRequest.body(codeRequestType);
         String uuid = codeSnippetStorage.addCode(received);
         return ok().contentType(APPLICATION_JSON).body(String.format("{\"id\": \"%s\"}", uuid));
