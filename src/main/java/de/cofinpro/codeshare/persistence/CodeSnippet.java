@@ -51,8 +51,8 @@ public class CodeSnippet {
      * @return the entity to store.
      */
     public static CodeSnippet fromDto(CodeSnippetRequestDTO requestDTO) {
-        return new CodeSnippet(requestDTO.getCode(),
-                Math.max(0, requestDTO.getTime()),
-                Math.max(0, requestDTO.getViews()));
+        return new CodeSnippet(requestDTO.code(),
+                Math.max(0, requestDTO.time()),
+                Math.max(0, requestDTO.views()));
     }
 }

@@ -77,8 +77,8 @@ class CodeSharingPlatformAppTests {
 		mockMvc.perform(get("/code/%s".formatted(uuid)))
 				.andExpect(header().string("content-type", "text/html;charset=UTF-8"))
 				.andExpect(content().string(containsStringIgnoringCase("<title>Code</title>")))
-				.andExpect(content().string(containsString(StringEscapeUtils.escapeHtml4(codeSnippet.getCode()))))
-				.andExpect(content().string(containsString(codeSnippet.getDate())))
+				.andExpect(content().string(containsString(StringEscapeUtils.escapeHtml4(codeSnippet.code()))))
+				.andExpect(content().string(containsString(codeSnippet.date())))
 				.andExpect(status().isOk());
 	}
 
@@ -102,7 +102,7 @@ class CodeSharingPlatformAppTests {
 				.andExpect(status().isOk()).andReturn().getResponse();
 		Optional<CodeSnippetResponseDTO> retrieved = snippetStorage.findById(idFromResponse(response));
 		assertTrue(retrieved.isPresent());
-		assertEquals("another test code", retrieved.get().getCode());
+		assertEquals("another test code", retrieved.get().code());
 	}
 
 	@Test
@@ -125,7 +125,7 @@ class CodeSharingPlatformAppTests {
 				.andExpect(header().string("content-type", MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(status().isOk()).andReturn().getResponse();
 		String content = response.getContentAsString();
-		Matcher matcher = Pattern.compile("\"date\":\\s*\"2022").matcher(content);
+		Matcher matcher = Pattern.compile("\"date\":\\s*\"20\\d\\d").matcher(content);
 		for (int i = 0; i < amountLatest; i++) {
 			assertTrue(matcher.find());
 		}
