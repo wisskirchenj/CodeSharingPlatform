@@ -6,7 +6,6 @@ import de.cofinpro.codeshare.domain.CodeSnippetRequestDTO;
 import de.cofinpro.codeshare.domain.CodeSnippetResponseDTO;
 import de.cofinpro.codeshare.domain.CodeSnippetStorage;
 import org.apache.commons.text.StringEscapeUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,15 +50,6 @@ class CodeSharingPlatformAppTests {
 
 	@Value("${codesharing.latest.amount:10}")
 	private int amountLatest;
-
-	@BeforeAll
-	static void cleanDB() {
-		try {
-			Files.deleteIfExists(Path.of("./src/test/resources/db/snippets.mv.db"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	@BeforeEach
 	void setup() {
