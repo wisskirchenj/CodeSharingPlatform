@@ -4,13 +4,6 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
 }
 
-dependencies {
-    constraints {
-        val lombokVersion = "1.18.26"
-        implementation("org.projectlombok:lombok:$lombokVersion")
-    }
-}
-
 group = "de.cofinpro"
 version = "0.5-SNAPSHOT"
 
@@ -36,7 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    runtimeOnly("com.h2database:h2:2.1.214")
+    runtimeOnly("com.h2database:h2")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
