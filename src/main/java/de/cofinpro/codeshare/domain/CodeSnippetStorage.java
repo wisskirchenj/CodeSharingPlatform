@@ -88,8 +88,8 @@ public class CodeSnippetStorage {
      * configurable ${amountLatest} CodeSnippets with the latest timestamp in reversed order.
      * @return the 10 latest posted non-secret code snippets
      */
-    public List<CodeSnippetResponseDTO> findLatest() {
-        Pageable paging = PageRequest.of(0, amountLatest, Sort.Direction.DESC, "date");
+    public List<CodeSnippetResponseDTO> findLatest(int page) {
+        Pageable paging = PageRequest.of(page, amountLatest, Sort.Direction.DESC, "date");
         Page<CodeSnippet> pagedResult = snippetRepository.findAllNonSecret(paging);
        return pagedResult.getContent().stream().map(this::toDTO).toList();
     }

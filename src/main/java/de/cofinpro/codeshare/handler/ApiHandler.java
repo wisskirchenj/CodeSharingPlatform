@@ -4,6 +4,7 @@ import de.cofinpro.codeshare.domain.CodeSnippetRequestDTO;
 import de.cofinpro.codeshare.domain.CodeSnippetResponseDTO;
 import de.cofinpro.codeshare.domain.CodeSnippetStorage;
 import jakarta.servlet.ServletException;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import static org.springframework.web.servlet.function.ServerResponse.ok;
  * service layer handler class (in terms of WebMvc.fn) that handles all routed endpoint request of the application.
  */
 @Service
+@RegisterReflectionForBinding({CodeSnippetResponseDTO.class, CodeSnippetRequestDTO.class})
 public class ApiHandler {
 
     private final ParameterizedTypeReference<CodeSnippetResponseDTO> codeResponseType = new ParameterizedTypeReference<>(){};
@@ -38,8 +40,9 @@ public class ApiHandler {
         return ok().render("create");
     }
 
-    public ServerResponse getLatestCodeAsHtml(ServerRequest ignoredRequest) {
-        return ok().render("latest", codeSnippetStorage.findLatest());
+    public ServerResponse getLatestCodeAsHtml(ServerRequest request) {
+        int page = getPageParameter(request);
+        return ok().render("latest", codeSnippetStorage.findLatest(page));
     }
 
     public ServerResponse getCodeAsJson(ServerRequest request) {
@@ -52,8 +55,9 @@ public class ApiHandler {
         return ok().contentType(APPLICATION_JSON).body(String.format("{\"id\": \"%s\"}", uuid));
     }
 
-    public ServerResponse getLatestCodeAsJson(ServerRequest ignoredRequest) {
-        return ok().contentType(APPLICATION_JSON).body(codeSnippetStorage.findLatest());
+    public ServerResponse getLatestCodeAsJson(ServerRequest request) {
+        var page = getPageParameter(request);
+        return ok().contentType(APPLICATION_JSON).body(codeSnippetStorage.findLatest(page));
     }
 
     /**
@@ -66,5 +70,10 @@ public class ApiHandler {
     private CodeSnippetResponseDTO findCodeByIdOrThrow(ServerRequest request) {
         return codeSnippetStorage.findById(request.pathVariable("id"))
                 .orElseThrow(CodeNotFoundException::new);
+    }
+
+    private static int getPageParameter(ServerRequest request) {
+        var pageParam = request.param("page").orElse("0");
+        return pageParam.matches("\\d") ? Integer.parseInt(pageParam) : 0;
     }
 }

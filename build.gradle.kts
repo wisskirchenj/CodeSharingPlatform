@@ -1,17 +1,16 @@
+import org.gradle.internal.classpath.Instrumented.systemProperty
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+
 plugins {
     java
-    id("org.springframework.boot") version "3.0.5"
+    id("org.springframework.boot") version "3.1.1"
     id("io.spring.dependency-management") version "1.1.0"
+    id("org.graalvm.buildtools.native") version "0.9.23"
 }
 
 group = "de.cofinpro"
-version = "0.5-SNAPSHOT"
+version = "0.5.5-SNAPSHOT"
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(19))
-    }
-}
 
 configurations {
     compileOnly {
@@ -41,4 +40,10 @@ dependencies {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+}
+
+tasks.named<BootBuildImage>("bootBuildImage") {
+    systemProperty("spring.profiles.active", "k8s")
+    builder.set("dashaun/builder:tiny")
+    environment.put("BP_NATIVE_IMAGE", "true")
 }

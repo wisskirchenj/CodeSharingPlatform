@@ -1,1 +1,1 @@
-rootProject.name = "CodeSharingPlatform"
+rootProject.name = "code-sharing-platform"

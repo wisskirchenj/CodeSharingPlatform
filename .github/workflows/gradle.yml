@@ -36,7 +36,7 @@ jobs:
           - 5432:5432
         env:
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: code
+          POSTGRES_DB: codetest
 
     steps:
     - uses: actions/checkout@v3
