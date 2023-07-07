@@ -4,7 +4,7 @@
 #load_date {
     color: green;
     font-style: normal;
-    font-family: Helvetica;
+    font-family: Helvetica, sans-serif;
 }
 #code_snippet {
     font-size: larger;
