@@ -33,9 +33,9 @@ public class RoutingConfiguration {
 
     private RouterFunction<ServerResponse> apiRoutes(ApiHandler apiHandler) {
         return route()
-                .GET("/api/code/latest", apiHandler::getLatestCodeAsJson)
-                .GET("/api/code/{id}", apiHandler::getCodeAsJson)
-                .POST("/api/code/new", apiHandler::saveNewCode)
+                .GET("/code/api/latest", apiHandler::getLatestCodeAsJson)
+                .GET("/code/api/{id}", apiHandler::getCodeAsJson)
+                .POST("/code/api/new", apiHandler::saveNewCode)
                 .build();
     }
 

@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
@@ -22,6 +24,7 @@ import java.util.regex.Pattern;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -41,8 +44,12 @@ class CodeSharingPlatformAppTests {
 
     @Autowired
     CodeSnippetStorage snippetStorage;
+
     @Autowired
     MockMvc mockMvc;
+
+    @MockBean
+    JwtDecoder jwtDecoder;
 
     ObjectMapper objectMapper = new ObjectMapper();
     CodeSnippetResponseDTO codeSnippet;
@@ -61,7 +68,7 @@ class CodeSharingPlatformAppTests {
         String uuid = snippetStorage.addCode(requestDTO);
         assertTrue(snippetStorage.findById(uuid).isPresent());
         codeSnippet = snippetStorage.findById(uuid).get();
-        mockMvc.perform(get("/code/%s".formatted(uuid)))
+        mockMvc.perform(get("/code/%s".formatted(uuid)).with(jwt()))
                 .andExpect(header().string("content-type", "text/html;charset=UTF-8"))
                 .andExpect(content().string(containsStringIgnoringCase("<title>Code</title>")))
                 .andExpect(content().string(containsString(StringEscapeUtils.escapeHtml4(codeSnippet.code()))))
@@ -71,17 +78,18 @@ class CodeSharingPlatformAppTests {
 
     @Test
     void whenGetNewCode_createDotHtmlReturnedWith200() throws Exception {
-        mockMvc.perform(get("/code/new"))
+        mockMvc.perform(get("/code/new").with(jwt()))
                 .andExpect(header().string("content-type", "text/html;charset=UTF-8"))
                 .andExpect(content().string(stringContainsInOrder(HTML_FORM.split("\\s+"))))
-                .andExpect(content().string(containsString("/js/send.js")))
-                .andExpect(content().string(containsString("/css/create.css")))
+                .andExpect(content().string(containsString("js/send.js")))
+                .andExpect(content().string(containsString("css/create.css")))
                 .andExpect(status().isOk());
     }
 
     @Test
     void whenPostNewCode_JsonReturnedWith200AndIdAndNextGetRetrieves() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(post("/api/code/new")
+        MockHttpServletResponse response = mockMvc.perform(post("/code/api/new")
+                        .with(jwt())
                         .header("content-type", "application/json")
                         .content("{\"code\":\"another test code\"}"))
                 .andExpect(header().string("content-type", MediaType.APPLICATION_JSON_VALUE))
@@ -97,7 +105,7 @@ class CodeSharingPlatformAppTests {
         String uuid = snippetStorage.addCode(requestDTO);
         assertTrue(snippetStorage.findById(uuid).isPresent());
         codeSnippet = snippetStorage.findById(uuid).get();
-        mockMvc.perform(get("/api/code/%s".formatted(uuid)))
+        mockMvc.perform(get("/code/api/%s".formatted(uuid)).with(jwt()))
                 .andExpect(content().json(toJson(codeSnippet)))
                 .andExpect(header().string("content-type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
@@ -108,7 +116,8 @@ class CodeSharingPlatformAppTests {
         for (int i = 0; i < amountLatest + 3; i++) {
             snippetStorage.addCode(requestDTO);
         }
-        MockHttpServletResponse response =  mockMvc.perform(get("/api/code/latest"))
+        MockHttpServletResponse response =  mockMvc.perform(get("/code/api/latest")
+                        .with(jwt()))
                 .andExpect(header().string("content-type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk()).andReturn().getResponse();
         String content = response.getContentAsString();
@@ -124,7 +133,8 @@ class CodeSharingPlatformAppTests {
         for (int i = 0; i < amountLatest + 3; i++) {
             snippetStorage.addCode(requestDTO);
         }
-        MockHttpServletResponse response =  mockMvc.perform(get("/code/latest"))
+        MockHttpServletResponse response =  mockMvc.perform(get("/code/latest")
+                        .with(jwt()))
                 .andExpect(header().string("content-type", "text/html;charset=UTF-8"))
                 .andExpect(status().isOk()).andReturn().getResponse();
         String content = response.getContentAsString();

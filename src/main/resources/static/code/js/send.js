@@ -8,7 +8,7 @@ function send() {
     let json = JSON.stringify(object);
 
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", '/api/code/new', false)
+    xhr.open("POST", '/code/api/new', false)
     xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
     xhr.send(json);
 
