@@ -41,9 +41,10 @@ public class RoutingConfiguration {
 
     private RouterFunction<ServerResponse> htmlRoutes(ApiHandler apiHandler) {
         return route()
-                .GET("/code/new", apiHandler::getNewCode)
+                .GET("/code", apiHandler::getLatestCodeAsHtml)
                 .GET("/code/latest", apiHandler::getLatestCodeAsHtml)
-                .GET("/code/{id}", apiHandler::getCodeAsHtml)
+                .GET("/code/new", apiHandler::getNewCode)
+                .GET("/code/{id}", apiHandler::getCodeAsHtml) // must be last (otherwise matches above)
                 .build();
     }
 }
