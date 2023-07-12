@@ -4,6 +4,8 @@ import de.cofinpro.codeshare.domain.CodeSnippetRequestDTO;
 import de.cofinpro.codeshare.domain.CodeSnippetResponseDTO;
 import de.cofinpro.codeshare.domain.CodeSnippetStorage;
 import jakarta.servlet.ServletException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,6 +28,7 @@ public class ApiHandler {
     private final ParameterizedTypeReference<CodeSnippetResponseDTO> codeResponseType = new ParameterizedTypeReference<>(){};
     private final ParameterizedTypeReference<CodeSnippetRequestDTO> codeRequestType = new ParameterizedTypeReference<>(){};
     private final CodeSnippetStorage codeSnippetStorage;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     public ApiHandler(CodeSnippetStorage codeSnippetStorage) {
@@ -33,25 +36,31 @@ public class ApiHandler {
     }
 
     public ServerResponse getCodeAsHtml(ServerRequest request) {
-        return ok().render("code", findCodeByIdOrThrow(request));
+        var id = request.pathVariable("id");
+        logger.info("get request for code snippet with id '{}'", id);
+        return ok().render("code", findCodeByIdOrThrow(id));
     }
 
     public ServerResponse getNewCode(ServerRequest ignoredRequest) {
+        logger.info("new code form requested");
         return ok().render("create");
     }
 
     public ServerResponse getLatestCodeAsHtml(ServerRequest request) {
         int page = getPageParameter(request);
+        logger.info("page {} of latest code snippets requested", page);
         return ok().render("latest", codeSnippetStorage.findLatest(page));
     }
 
     public ServerResponse getCodeAsJson(ServerRequest request) {
-        return ok().contentType(APPLICATION_JSON).body(findCodeByIdOrThrow(request), codeResponseType);
+        return ok().contentType(APPLICATION_JSON)
+                .body(findCodeByIdOrThrow(request.pathVariable("id")), codeResponseType);
     }
 
     public ServerResponse saveNewCode(ServerRequest serverRequest) throws IOException, ServletException {
         CodeSnippetRequestDTO received = serverRequest.body(codeRequestType);
         String uuid = codeSnippetStorage.addCode(received);
+        logger.trace("added new code snippet {}", received);
         return ok().contentType(APPLICATION_JSON).body(String.format("{\"id\": \"%s\"}", uuid));
     }
 
@@ -63,13 +72,12 @@ public class ApiHandler {
     /**
      * look up a code snippet by the uuid given as "id" path variable and return a response DTO
      * if the uuid is found and valid to display (regarding restrictions) - else throw exception.
-     * @param request the http Get request
+     * @param id the id given
      * @return the CodeSnippetResponseDTO after retrieval and restriction application
      * @throws CodeNotFoundException in case no code is found / stored with given uuid
      */
-    private CodeSnippetResponseDTO findCodeByIdOrThrow(ServerRequest request) {
-        return codeSnippetStorage.findById(request.pathVariable("id"))
-                .orElseThrow(CodeNotFoundException::new);
+    private CodeSnippetResponseDTO findCodeByIdOrThrow(String id) {
+        return codeSnippetStorage.findById(id).orElseThrow(CodeNotFoundException::new);
     }
 
     private static int getPageParameter(ServerRequest request) {
