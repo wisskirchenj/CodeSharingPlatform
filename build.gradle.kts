@@ -10,7 +10,7 @@ plugins {
 
 group = "de.cofinpro"
 version = "0.6.0-SNAPSHOT"
-
+val dockerHubRepo = "wisskirchenj/"
 
 configurations {
     compileOnly {
@@ -21,7 +21,6 @@ configurations {
 repositories {
     mavenCentral()
 }
-
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -49,5 +48,6 @@ tasks.named<Test>("test") {
 tasks.named<BootBuildImage>("bootBuildImage") {
     systemProperty("spring.profiles.active", "k8s")
     builder.set("dashaun/builder:tiny")
+    imageName.set(dockerHubRepo + rootProject.name + ":" + version)
     environment.put("BP_NATIVE_IMAGE", "true")
 }
