@@ -1,10 +1,9 @@
-import org.gradle.internal.classpath.Instrumented.systemProperty
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
     java
     id("org.springframework.boot") version "3.1.1"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("io.spring.dependency-management") version "1.1.1"
     id("org.graalvm.buildtools.native") version "0.9.23"
 }
 
@@ -46,7 +45,6 @@ tasks.named<Test>("test") {
 }
 
 tasks.named<BootBuildImage>("bootBuildImage") {
-    systemProperty("spring.profiles.active", "k8s")
     builder.set("dashaun/builder:tiny")
     imageName.set(dockerHubRepo + rootProject.name + ":" + version)
     environment.put("BP_NATIVE_IMAGE", "true")
