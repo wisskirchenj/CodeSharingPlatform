@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.cofinpro"
-version = "0.6.0-SNAPSHOT"
+version = "0.6.2-SNAPSHOT"
 val dockerHubRepo = "wisskirchenj/"
 
 configurations {
