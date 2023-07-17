@@ -61,7 +61,7 @@ public class CodeSnippetStorage {
                 : codeSnippet.getTime() - Duration.between(codeSnippet.getDate(), LocalDateTime.now()).getSeconds();
         if (timeRemaining < 0) {
             snippetRepository.delete(codeSnippet);
-            throw new CodeNotFoundException();
+            return null;
         }
         if (codeSnippet.getViews() > 0) {
             if (codeSnippet.getViews() == 1) {

@@ -10,13 +10,14 @@ label {
     width: 40vw;
     text-align: right;
     padding-right: 1em;
+    margin-top: 0.5em;
 }
 input {
     text-align: right;
 }
 #code_snippet {
     font-size: larger;
-    height: 150px;
+    height: 500px;
     padding: 5px;
     color: darkblue;
     background-color: lightgrey;
@@ -24,6 +25,7 @@ input {
 #div_button {
     display: flex;
     justify-content: center;
+    margin-top: 0.5em;
 }
 #send_snippet {
     margin: 0 auto;
@@ -49,4 +51,13 @@ input {
 #send_snippet:active {
     box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6),
     inset 2px 2px 3px rgba(0, 0, 0, .6);
+}
+p {
+    font: 1rem 'Fira Sans', sans-serif;
+    width: 80vw;
+    text-align: center;
+    font-size: larger;
+    height: 150px;
+    padding: 5px;
+    color: darkgreen;
 }

@@ -1,23 +1,23 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <title>Code</title>
-    <link rel="stylesheet" th:href="@{css/code.css}"/>
-    <link rel="stylesheet"
-          href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/styles/default.min.css">
-    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+  <meta charset="utf-8">
+  <title>Code</title>
+  <link rel="stylesheet" th:href="@{css/code.css}"/>
+  <link rel="stylesheet"
+        href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/default.min.css">
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body>
-<span id="load_date" th:text="${codeSnippetResponseDTO.date}"></span>
+<span id="load_date" th:unless="${codeSnippetResponseDTO.date == null}" th:text="${codeSnippetResponseDTO.date}"></span>
 <span id="views_restriction" th:unless="${codeSnippetResponseDTO.views == 0}" class="restrict">
-    <br>
-    <span th:text="${codeSnippetResponseDTO.views} == -1 ? 0 : ${codeSnippetResponseDTO.views}"></span> more views allowed
+  <br>
+  <span th:text="${codeSnippetResponseDTO.views} == -1 ? 0 : ${codeSnippetResponseDTO.views}"></span> more views allowed
 </span>
 <span id="time_restriction" th:if="${codeSnippetResponseDTO.time > 0}" class="restrict">
-    <br>
-    The code will be available for <span th:text="${codeSnippetResponseDTO.time}"></span> seconds
+  <br>
+  The code will be available for <span th:text="${codeSnippetResponseDTO.time}"></span> seconds
 </span>
 <pre id="code_snippet"><code><span th:text="${codeSnippetResponseDTO.code}"></span></code></pre>
 </body>

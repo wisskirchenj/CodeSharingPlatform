@@ -38,7 +38,7 @@ public class ApiHandler {
     public ServerResponse getCodeAsHtml(ServerRequest request) {
         var id = request.pathVariable("id");
         logger.info("get request for code snippet with id '{}'", id);
-        return ok().render("code", findCodeByIdOrThrow(id));
+        return ok().render("code", findCodeById(id));
     }
 
     public ServerResponse getNewCode(ServerRequest ignoredRequest) {
@@ -54,7 +54,7 @@ public class ApiHandler {
 
     public ServerResponse getCodeAsJson(ServerRequest request) {
         return ok().contentType(APPLICATION_JSON)
-                .body(findCodeByIdOrThrow(request.pathVariable("id")), codeResponseType);
+                .body(findCodeById(request.pathVariable("id")), codeResponseType);
     }
 
     public ServerResponse saveNewCode(ServerRequest serverRequest) throws IOException, ServletException {
@@ -74,10 +74,11 @@ public class ApiHandler {
      * if the uuid is found and valid to display (regarding restrictions) - else throw exception.
      * @param id the id given
      * @return the CodeSnippetResponseDTO after retrieval and restriction application
-     * @throws CodeNotFoundException in case no code is found / stored with given uuid
      */
-    private CodeSnippetResponseDTO findCodeByIdOrThrow(String id) {
-        return codeSnippetStorage.findById(id).orElseThrow(CodeNotFoundException::new);
+    private CodeSnippetResponseDTO findCodeById(String id) {
+        return codeSnippetStorage.findById(id).orElse(
+                new CodeSnippetResponseDTO("Code requested not found!", null, 0, 0)
+        );
     }
 
     private static int getPageParameter(ServerRequest request) {

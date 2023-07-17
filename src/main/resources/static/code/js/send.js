@@ -1,4 +1,4 @@
-function send() {
+async function send() {
     let object = {
         "code": document.getElementById("code_snippet").value,
         "time": parseInt(document.getElementById("time_restriction").value),
@@ -7,12 +7,22 @@ function send() {
 
     let json = JSON.stringify(object);
 
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", '/code/api/new', false)
-    xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-    xhr.send(json);
+    const response = await fetch('/code/api/new', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        body: json
+    });
 
-    if (xhr.status === 200) {
-        alert("Success!");
+    if (response.ok) {
+        const uuid = await response.json();
+        const success = document.createElement("p");
+        success.innerText = `Success!\n Id = ${uuid.id}`;
+        document.body.appendChild(success);
+    } else {
+        const err = document.createElement("p");
+        err.innerText = "Error posting new code !";
+        document.body.appendChild(err);
     }
 }
