@@ -35,8 +35,7 @@ class CodeSharingPlatformAppTests {
 
     private static final String HTML_FORM = """
 			<form>
-			    <textarea class="ui-width" id="code_snippet">// write your code here</textarea>
-			    <br>
+			    <textarea class="ui-width" id="code_snippet" placeholder="paste your code here"></textarea>			    <br>
 			    <div class="ui-width" id="div_button">
 			        <button id="send_snippet" type="button" onclick="send()">Submit</button>
 			    </div>
