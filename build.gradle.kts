@@ -1,3 +1,4 @@
+import org.springframework.boot.gradle.tasks.aot.AbstractAot
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
@@ -32,7 +33,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    
+
     val commonsVersion = "1.11.0"
     testImplementation("org.apache.commons:commons-text:${commonsVersion}")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -41,8 +42,16 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok")
 }
 
+graalvmNative {
+    testSupport.set(false)
+}
+
 tasks.named<Test>("test") {
     useJUnitPlatform()
+}
+
+tasks.named<AbstractAot>("processTestAot") {
+    enabled = false
 }
 
 tasks.named<BootBuildImage>("bootBuildImage") {
