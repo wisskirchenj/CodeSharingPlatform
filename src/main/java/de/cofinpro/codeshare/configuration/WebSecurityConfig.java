@@ -29,13 +29,13 @@ import java.util.Objects;
  * new Spring security 6.0 style provision of SecurityFilterChain bean with the security configuration,
  * as well as PasswordProvider and AuthenticationManager that makes use of our UserDetails persistence.
  */
+@Getter
+@Setter
 @Configuration
 @ConfigurationProperties("security.oauth2")
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Getter
-    @Setter
     private String issuerValidatorUri;
 
     @Bean
