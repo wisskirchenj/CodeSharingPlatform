@@ -3,7 +3,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
     java
-    id("org.springframework.boot") version "3.2.4"
+    id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     id("org.graalvm.buildtools.native") version "0.10.1"
 }
@@ -56,7 +56,7 @@ tasks.named<AbstractAot>("processTestAot") {
 
 tasks.named<BootBuildImage>("bootBuildImage") {
 //    buildpacks.set(listOf("paketobuildpacks/java:beta"))
-    buildpacks.set(listOf("paketobuildpacks/java-native-image:beta"))
+    buildpacks.set(listOf("paketobuildpacks/java-native-image:latest"))
     builder.set("paketobuildpacks/builder-jammy-buildpackless-tiny")
     imageName.set(dockerHubRepo + rootProject.name + ":" + version)
     createdDate.set("now")
